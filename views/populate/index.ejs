@@ -1,0 +1,163 @@
+<div id="main_screen">
+	<div id="main_content">
+	  <h1>Iniciranje modela Pizza</h1>
+	  <p>
+	  	Možete popuniti modele inicijalnim podacima..
+	  </p>
+	  <a class="pure-button orange-button" id="populate_pizzas">Pizze!</a>
+	  <a class="pure-button green-button" id="populate_orderss">Narudzbe!</a>
+	  <div id="done"></div>
+	</div>
+</div>
+<script type="text/javascript">
+
+// Pizza fixtures
+var pizzas = [
+	{
+		name: "Capriciosa", imgURL: "/images/capriciosa.jpg", description: "Klasična pizza", ingredients: "paradajz, sir, šunka, masline", small: 5, large: 8, jumbo: 14,
+	},
+	{
+		name: "Fuego", imgURL: "/images/fuego.jpg", description: "Za ljubitelje pikantnog", ingredients: "paradajz, sir, kulen, fafaroni, tabasco", small: 5.5, large: 8.5, jumbo: 15,
+	},
+	{
+		name: "Margharita",	imgURL: "/images/margharita.jpg", description: "Originalni klasik", ingredients: "paradajz, mozzarella sir, bosiljak", small: 4, large: 7, jumbo: 12,
+	},
+	{
+		name: "Quattro Stagioni", imgURL: "/images/quattrostagione.jpg", description: "Četiri godišnja doba", ingredients: "paradajz, mozzarella, riccota, paprike, suho meso, gljive, škampi", small: 7, large: 10, jumbo: 18,
+	}
+];
+
+// Order fixtures
+var orders = [
+	{userName: "Samwise Gumgee", userPhone: "234324324", userAddress: "Vrtlarska 23", userNote: "Ekstra sira, manje priče.", isProcessed: 0},
+	{userName: "Aldus Dumbledore", userPhone: "7528287", userAddress: "Žrtava gužve 3", userNote: "Bez ičega.", isProcessed: 0},
+	{userName: "Chicken Little", userPhone: "2782278", userAddress: "Lažnih alarma 7", userNote: "", isProcessed: 0},
+	{userName: "Frodo Baggins", userPhone: "8272878", userAddress: "Kružnih tokova b.b.", userNote: "Kupite Colu usput", isProcessed: 0},
+	{userName: "Stuart Little", userPhone: "5181868", userAddress: "Mišjih stopa 9", userNote: "Sira kao nikad nikom.", isProcessed: 0},
+	{userName: "Bob Dolittle", userPhone: "72828278", userAddress: "Naopaka 11", userNote: "", isProcessed: 0},
+	{userName: "Hubba Bubba", userPhone: "2788278872", userAddress: "Bulevar kišnih dana 9", userNote: "", isProcessed: 0},
+	{userName: "Rodion Raskolnikov", userPhone: "245245252", userAddress: "Jadnih luzera 23", userNote: "Ljuti sos!", isProcessed: 0},
+	{userName: "Price Fisher", userPhone: "4525245", userAddress: "Plastičnih igračaka 2", userNote: "", isProcessed: 0},
+	{userName: "Alvin Chipmunk", userPhone: "425245252", userAddress: "Vrlo visoko 99", userNote: "", isProcessed: 0},
+];
+
+var populatePizzas = function() {
+
+    $('#done').html('')
+	var doneOk = true;
+
+	 for (var i = pizzas.length - 1; i >= 0; i--){
+	   pizza = pizzas[i];
+	   console.log(pizza);
+
+	   try {
+	     $.post("/pizza/create", pizza).done(function(ajaxResponse){
+	          if (ajaxResponse.id) {
+	          	//
+	          } else {
+	            $('#done').html('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+	            doneOk = false;
+	          }            
+	        }).fail(function(){
+	            $('#done').html('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+	            doneOk = false;
+	        });    
+	   } catch(err) {
+	      $('#init_error_window').html('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+	      doneOk = false;
+	   }
+	};
+
+    if (doneOk) $('#done').html('<h1>Uspjeh!</h1><p>Fiksni podaci o pizzama uspještno ubačeni.</p>').hide().fadeIn();
+}
+
+var populateOrders = function() {
+
+    $('#done').html('')
+	var doneOk = true;
+
+	 for (var i = orders.length - 1; i >= 0; i--){
+	   order = orders[i];
+	   console.log(order);
+
+	   try {
+	     $.post("/order/create", order).done(function(ajaxResponse){
+	          if (ajaxResponse.id) {
+	          	console.log(ajaxResponse);
+	          } else {
+	            $('#done').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+	            doneOk = false;
+	          }            
+	        }).fail(function(){
+	            $('#done').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+				doneOk = false;
+	        });    
+	   } catch(err) {
+	      $('#init_error_window').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+	      doneOk = false;
+	   }
+	};
+
+	if (doneOk) $('#done').append('<h1>Uspjeh!</h1><p>Fiksni podaci o orderma uspještno ubačeni.</p>').hide().fadeIn();
+}
+
+var populateOrderLines = function () {
+
+	console.log("Populating orderLines");
+	numOrders = orders.length;
+	var pizzaSizes = ["small", "large", "jumbo"];
+	var pizzaNames = [];
+	var numLinues = 0;
+	var doneOk = true;
+
+	// populate pizzaNames with pizza.names
+	for (var i = pizzas.length - 1; i >= 0; i--) {
+		pizzaNames[i] = pizzas[i].name;
+	}
+
+	console.log("PizzaNames Arrray done.");
+
+	for (var i = 1; i <= orders.length; i++) {
+		numLines = Math.floor(Math.random()*4);
+		console.log("Iterate order: " + i);
+		for (var j = numLines; j >= 0; j--) {
+			console.log("Iterate order line: " + j);
+			orderLine = {
+				order: i,
+				pizzaSize: pizzaSizes[Math.floor(Math.random()*pizzaSizes.length)],
+				pizza: pizzaNames[Math.floor(Math.random()*pizzaNames.length)]
+ 			};
+
+		    try {
+		     $.post("/orderline/create", orderLine).done(function(ajaxResponse){
+		          if (ajaxResponse.id) {
+		          	console.log(ajaxResponse);
+		          } else {
+		            $('#done').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+		            doneOk = false;
+		          }            
+		        }).fail(function(){
+		            $('#done').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+					doneOk = false;
+		        });    
+		    } catch(err) {
+		      $('#init_error_window').append('<h1>Error!</h1><p>Post problems: ' + ajaxResponse + '</p>');
+		      doneOk = false;
+		    }
+		}
+	}
+
+	if (doneOk) $('#done').append('<h1>Uspjeh!</h1><p>Fiksni podaci o linijama ordera uspještno ubačeni.</p>').hide().fadeIn();
+}
+
+$(document).ready(function(){
+	$('#main_screen').fadeIn('slow');
+	$('#populate_pizzas').click(populatePizzas);
+	$('#populate_orderss').click(function(){
+		populateOrders();
+		console.log("Populated orders");
+		populateOrderLines();
+		console.log("Populated orderLines");
+	});
+});
+</script>

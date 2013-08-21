@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><%- title %></title>
+
+		<!-- Viewport mobile tag for sensible mobile support -->
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+		<meta charset="utf-8">
+		
+		<!-- Stylesheets from your assets folder are included here -->
+
+<!--  		<link href="https://raw.github.com/designmodo/Flat-UI/master/css/flat-ui.css" rel="stylesheet">
+ -->
+ 		<%- assets.css() %>
+ 		  <link href=
+  "//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css"
+  rel="stylesheet">
+  		<!-- Javascripts from your assets folder are included here -->
+		<%- assets.js() %>
+	</head>
+
+	<body>
+		<%- body %>
+
+		<!-- Templates from your view path are included here -->
+		<%- assets.templateLibrary() %>
+
+	</body>
+</html>

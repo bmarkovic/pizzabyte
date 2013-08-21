@@ -1,0 +1,135 @@
+<div class="navbar">
+    <div class="navbar-inner">
+     <span class="brand">PizzaByte</span>
+      <ul class="nav-pull-right">
+        <li><a class="pure-button" href="#">logout</a></li>
+        <li>Operater: <strong>Jimmy Jones</strong></li>
+      </ul>
+    </div>
+</div>
+
+<div id="order_list">
+  <div id="order_summaries_content">
+     <div class="order_summaries">
+       <h2>Neobrađene narudžbe</h2>
+          <table id="outstanding_orders" class="pure-table pure-table-striped fullwidth-table auto-counting">
+            <thead>
+              <tr>
+                <th>Rb</th>
+                <th>ID#</th>
+                <th>Kupac</th>
+                <th>Adresa dostave</th>
+                <th>Uneseno prije</th>
+                <th>Obradi</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: orders">
+              <tr data-bind"id: 'order_' + id">
+                <td></td>
+                <td data-bind="text: zeroPadInt(id)"></td>
+                <td data-bind="text: userName"></td>
+                <td data-bind="text: userAddress"></td>
+                <td data-bind="text: prettyDateTime(createdAt)"></td>
+                <td><a class="pure-button search-button" data-bind="click: $root.processOrder"><i class="icon-play"></i></a></td>
+              </tr>
+            </tbody>
+            <thead class="tabletotal">
+              <tr>
+                <th data-bind="text: countRows"></th>
+                <th colspan="4">Obradi slijedeću po redu:</th>
+                <th><a class="pure-button search-button" data-bind="click: $root.processNextOrder"><i class="icon-play"></i></a></th>
+              </tr>
+            </thead>
+          </table>
+     </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="order_detail" data-bind="fadeVisible: currentWindow()=='obrada'">
+  <div class="modal-mask">
+    <div class="modal-content">
+      <div id="order_customer">
+        <div class="order_title_row" >
+          <div class="order_title">
+            <h1>Narudžba br. <span id="order_number">#A8ADE</span></h1>
+            <h3 class="order_time">Od: danas, 118:30</h3>
+          </div>
+          <div class="order_buttons">
+            <a class="pure-button search-button"><i class= "icon-print">&nbsp;</i></a>
+            <a class="pure-button search-button red-button"><i class= "icon-minus-sign">&nbsp;</i></a> 
+          </div>
+        </div>
+        <dl>
+          <lh><h3>Kupac:</h3></lh>
+          <dt>Ime:
+            <dd>Kupac Kupčević</dd>
+          </dt>
+          <dt>Adresa:
+            <dd>Jadnih Gubitnika 12</dd>
+          </dt>
+          <dt>Telefon:
+            <dd>067/890-123</dd>
+          </dt>
+        </dl>
+        <div class="order_summary">
+          <table id="order_confirmation_stage" class="pure-table fullwidth-table pure-table-striped">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Veličina</th>
+                <th>Pizza</th>
+                <th>Cijena</th>
+              </tr>
+            </thead>
+            <tbody class="table_rows" data-bind="foreach: currentOrderContext().orderLines">
+              <tr data-bind"id: 'order_' + $index">
+                <td></td>
+                <td data-bind="text: $root.sizeTranslate($data)">Velika</td>
+                <td data-bind="text: pizza">Capriciosa</td>
+                <td class="order_row_price" data-bind="text: formatPrice($root.pizzaPrice($data))">8,00</td>
+              </tr>
+            </tbody>
+            <thead class="tabletotal">
+              <tr>
+              <th colspan="3">Ukupno</th>
+              <th class="order_row_price"data-bind="text: formatPrice(subTotal($root.currentOrderContext()))">8,00</th>
+              </tr>
+            </thead>
+          </table>
+          <div class="well">
+            <h4>Napomena</h4>
+            <p>
+              Lorem ipsum dolor sit amet, i ekstra sira.
+            </p>
+          </div>
+          <div>
+            <a class="pure-button grey-button" href="#/">Odustani</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-wrap" id="init_error_window" data-bind="visible:initError">
+  <div class="modal-mask">
+    <div class="modal-content" id="error_window_content">
+      <h1>Nezgodno... aplikacija nije u funkciji :(</h1>
+      <p>
+        Naravno, radimo sve što je u našoj moći da ju osposobimo. Vratite se kasnije.
+      </p>
+      <p>
+        Hvala na razumijevanju!
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <div id="footer_content">
+    <p>(c) 2013 Elivero.com</p>
+  </div>
+</div>
+
+<script type="text/javascript" src="/js/moment.hr.min.js"></script>
+<script type="text/javascript" src="/js/bo.js"></script>
