@@ -10,6 +10,25 @@ function orderLine(pizzaSize, orderedPizza) {
     self.pizza = ko.observable(orderedPizza);
 }
 
+$(document).keyup(function(e) {
+  var currentWindow = viewModel.currentWindow();
+  console.log("KesPress, currentWindow = " + currentWindow);
+  switch (e.keyCode) {
+    case 27: {
+      console.log("ESC keypress detected");
+      if (currentWindow == 'obrada') {
+        viewModel.orderRouter.setLocation('#/list');
+      }
+    }
+    case 13: {
+      console.log('ENTER keypress detected');
+      if (currentWindow == 'list' || currentWindow == '') {
+        viewModel.orderRouter.setLocation('#/obrada')
+      }
+    }
+  }
+});
+
 //  ---------- ViewModel
 
 function OrdersViewModel() {
@@ -48,17 +67,17 @@ function OrdersViewModel() {
       self.currentWindow('list');
     });
 
+    this.get('#/obrada', function() {
+      console.log('route = #/obrada')
+      this.app.setLocation('#/obrada/' + self.orders()[0].id);
+    });
+
     // order processing (numbered order)
     this.get('#/obrada/:order', function() {
       self.currentWindow('obrada');
       // self.currentOrderContext(this.params.order);
       console.log("Window: " + self.currentWindow() + "  currentOrder " + this.params.order);
     });
-
-    // this.get('#obrada', function() {
-    //   self.currentWindow('obrada');
-    //   self.currentOrder(self.orders().length);
-    // });
 
     // set list as default route
     this.get('', function() {
@@ -76,7 +95,7 @@ function OrdersViewModel() {
 
   self.processNextOrder = function () {
     console.log("Process next order.");
-    // TODO: processing the next order
+    self.orderRouter.setLocation("#/obrada");
   }
 
   self.countRows = ko.computed(function() {
