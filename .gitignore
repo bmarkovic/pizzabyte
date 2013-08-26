@@ -1,3 +1,6 @@
 # NODE JS stuff
-config/local.js
 node_modules/
+
+# SAILS JS stuff
+config/local.js
+.tmp/
