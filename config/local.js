@@ -6,10 +6,6 @@
 
 
 // For example, to use port 80 on the local machine, override the `port` config
-module.exports = { 
-   port: 63338,
-   environment: "production"
-}
 
 // or to keep your db credentials out of the repo, but to use them on the local machine
 // override the `modelDefaults` config

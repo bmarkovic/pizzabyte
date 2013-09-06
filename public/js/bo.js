@@ -41,19 +41,20 @@ function OrdersViewModel() {
   self.initError = false;
 
   // outer model data
-  self.currentOrderContext = ko.observable({
-    id: 0,
-    userNaem: '',
-    userAddress: '',
-    userPhone: '',
-    userNote: '',
-    orderLines: [
+  self.currentOrderContext = {
+    id: ko.observable(0),
+    userName: ko.observable(),
+    userAddress: ko.observable(),
+    userPhone: ko.observable(),
+    userNote: ko.observable(),
+    createdAt: ko.observable(Date.now()),
+    orderLines: ko.observableArray([
      {
-        pizza: 'Pita',
-        pizzaSize: "Vel'ka"
+        pizza:  ko.observable('Margharita'),
+        pizzaSize: ko.observable('small')
      }
-    ] 
-  });
+    ])
+  };
   self.orders = ko.observableArray(outstandingOrders);
   self.pizzas = pizzaDimension;
 
@@ -76,8 +77,50 @@ function OrdersViewModel() {
     this.get('#/obrada/:order', function() {
       self.currentWindow('obrada');
       // self.currentOrderContext(this.params.order);
-      console.log("Window: " + self.currentWindow() + "  currentOrder " + this.params.order);
-    });
+      var orderId = this.params.order;
+      console.log("Window: " + self.currentWindow() + "  currentOrder " + orderId);
+      var order = $.grep(self.orders(), function(e){ return orderId == e.id; })[0];
+
+      self.currentOrderContext.id(order.id);
+      self.currentOrderContext.userName(order.userName),
+      self.currentOrderContext.userAddress(order.userAddress);
+      self.currentOrderContext.userPhone(order.userPhone);
+      self.currentOrderContext.userNote(order.userNote);
+      self.currentOrderContext.createdAt(order.createdAt);       
+      
+      // let's get the current order lines
+
+      console.log('Current Order Context before orderLine fetch'); 
+      console.log(ko.toJS(self.currentOrderContext));
+
+      self.currentOrderContext.orderLines.removeAll();
+
+      try {
+        // get order lines for current order
+        $.getJSON("/orderline?order="+this.params.order).done(function(orderJSON){
+          console.log("OrderLine succes: "); 
+          console.log(orderJSON);
+
+          // feed order lines to current order context
+          for (var i = orderJSON.length - 1; i >= 0; i--) {
+            self.currentOrderContext.orderLines.push(new orderLine(orderJSON[i].pizzaSize, orderJSON[i].pizza));
+          };
+          console.log('Order stuffed:');
+          console.log(self.currentOrderContext.orderLines());
+          self.currentOrderContext.orderLines.valueHasMutated();
+
+        }).fail(function(data){
+           console.log("getJSON fail at order lines: " + data)
+           $('#init_error_window').fadeIn('fast');
+           $('#error_window_content').append("<pre>" + data.toString() + "</pre>");
+        });
+      } catch (err) {
+        console.log("getJSON, caught exception at order lines: " + err)
+        $('#init_error_window').fadeIn('fast');
+        $('#error_window_content').append("<pre>" + err.toString() + "</pre>");
+      };
+
+    }); // end get obrada order
 
     // set list as default route
     this.get('', function() {
@@ -106,134 +149,63 @@ function OrdersViewModel() {
 
   self.pizzaPrice = function(orderLine) {
     console.log("Pizza price");
+    console.log(orderLine);
     // and get the price for the size
-    // return orderLine.pizza()[orderLine.pizzaSize()];
-    return 0;
+    var pizza = $.grep(self.pizzas, function(e){ return e.name == orderLine.pizza(); })[0];
+    var price = pizza[orderLine.pizzaSize()];
+    return price;
   };
 
   // translating the pizza size for confirmation view
   self.sizeTranslate = function(orderLine) {
     console.log("sizeTranslate");
+    console.log(orderLine)
     var transString = 'Whaa?';
-    // var pizzaSize = orderLine.pizzaSize();
-    // switch(pizzaSize){
-    //   case 'small': 
-    //     transString = 'Mala';
-    //     break;
-    //   case 'large':
-    //     transString = 'Velika';
-    //     break;
-    //   case 'jumbo':
-    //     transString = 'Jumbo';
-    //     break;
-    // }
+    var pizzaSize = orderLine.pizzaSize();
+    switch(pizzaSize){
+      case 'small': 
+        transString = 'Mala';
+        break;
+      case 'large':
+        transString = 'Velika';
+        break;
+      case 'jumbo':
+        transString = 'Jumbo';
+        break;
+    }
     return transString;
   };
 
-/*  // init the order model with one default line
-  self.order = ko.observableArray([
-    new orderLine ('large', self.pizzas[0]),
-  ]);
-  
-  // push new default object into order model
-  self.addPizza = function() {
-        this.order.push(
-          new orderLine ('large', self.pizzas[0])
-        );
-  };
-  
-  // remove the selected order line
-  self.killPizza = function(orderLine) {
-    self.order.remove(orderLine);
-  };
-  
-  // return price for order line
-  self.pizzaPrice = function(orderLine) {
-    // and get the price for the size
-    return orderLine.pizza()[orderLine.pizzaSize()];
-  };
+  // Printing the order
+  self.printOrder = function() {
 
-  // pizza selected from modal dialog
-  // change pizza object  within our stored context
-  self.pizzaSelected = function(selectedPizza) {
-    self.currentOrderContext.pizza(selectedPizza);
-    self.orderRouter.setLocation('#/start');
+    var prtContent = $('#order_customer').html();
+
+    var printWindow = window.open('/printorder', 'Štampanje narudžbe', 'left=50,top=50,width=640,height=640,toolbar=0,scrollbars=0,status=0');
+
+    $(printWindow.document).ready(function(){
+      $(printWindow.document).contents().find('body').html(prtContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    });
+
   }
 
-  // store current order line in temp context store
-  // and trigger modal dialog
-  self.menuPizza = function(orderLine) {
-    self.currentOrderContext=orderLine;
-    self.orderRouter.setLocation('#/pizza')
-  }
+  // Final act of having the order processed
+  self.orderProcessed = function(){
+    var orderId = self.currentOrderContext.id();
+    self.orders.remove(function(e){
+      return e.id == orderId;
+    })
 
-  // calculate subtotal of order
-  self.subTotal = function(orderKO) {
-    order = ko.toJS(orderKO);
-    var sumTotal = 0;
-    for (var i=0; i < order.length; i++) {
-      sumTotal += order[i].pizza[order[i].pizzaSize];
-    }
-    return sumTotal;
-  };
+    var orderData = {isProcessed: 1}
 
-
-  self.finalizeOrder = function() {
- //    console.log("You've crossed the finnish line!");
-
-     // serialize data
-
-     // simplify order, we will consider pizza nime as
-     // unique identifier of pizza
-     var orderLineJS = {};
-     var orderJS = ko.toJS(self.order);
-     var orderId = 0;
-
-     var orderData = {
-        userName: ko.utils.unwrapObservable(self.userName),
-        userAddress: ko.utils.unwrapObservable(self.userAddress),
-        userPhone: ko.utils.unwrapObservable(self.userPhone),
-        userNote: ko.utils.unwrapObservable(self.userNote),
-        isProcessed: 0
-     }
-
-//     console.log(orderData);
-     
-     try {
-       $.post("/order/create", orderData).done(function(ajaxResponse){
+    try {
+       $.post("/order/update/" + orderId, orderData).done(function(ajaxResponse){
             if (ajaxResponse.id) {
-               
-               orderId = ajaxResponse.id;
-               console.log("All good.");
-               console.log(ajaxResponse);
-               console.log('Order ID: ' + orderId);
-
-               for (var i = orderJS.length - 1; i >= 0; i--) {
-                 orderLineJS = {
-                  order: orderId,
-                  pizza: orderJS[i].pizza.name,
-                  pizzaSize: orderJS[i].pizzaSize
-                  };
-                 try {
-                   $.post("/orderline/create", orderLineJS).done(function(ajaxResponse){
-                        if (ajaxResponse.id) {
-                          console.log("All good.");
-                          console.log(ajaxResponse);
-                        } else {
-                          console.log('Post problems: ' + ajaxResponse);
-                          $('#init_error_window').fadeIn('fast');
-                        }            
-                      }).fail(function(){
-                          console.log('Post failure');
-                          console.log(ajaxResponse);
-                          $('#init_error_window').fadeIn('fast');
-                      });    
-                 } catch(err) {
-                    $('#init_error_window').fadeIn('fast');
-                    console.log('Catched!');
-                 }
-                };
-
+              self.orderRouter.setLocation("#/list");            
             } else {
               console.log('Post problems: ' + ajaxResponse);
               $('#init_error_window').fadeIn('fast');
@@ -247,16 +219,7 @@ function OrdersViewModel() {
         $('#init_error_window').fadeIn('fast');
         console.log('Catched!');
      }
-     // fill simpler serialized object not to send back
-     // all the pizza dimension data that is in our
-     // orderSO object now
-
-
-
-
-     // window.location = "/congrats.html";  
-  };
-*/
+  }
 
 }
 
@@ -269,8 +232,15 @@ var formatPrice = function(price) {
 };
 
 var subTotal = function(currentOrder) {
-      console.log("function subTotal()");
-  return 0;
+  console.log("function subTotal()");
+  orderLines = currentOrder.orderLines();
+  console.log(orderLines);
+  var subTotal = 0;
+  for (var i = orderLines.length - 1; i >= 0; i--) {
+      console.log(orderLines[i]);
+      subTotal += viewModel.pizzaPrice(orderLines[i]);
+  };
+  return subTotal;
 };
 
 var zeroPadInt = function(x) {
@@ -299,11 +269,17 @@ ko.bindingHandlers.fadeVisible = {
     }
 };
 
-var pizzaDimension={};
-var outstandingOrders={};
-var viewModel;
 
 // initialize ViewModel
+
+
+var pizzaDimension={};
+var outstandingOrders=[];
+var viewModel;
+var hostName =  window.location.host;
+console.log("Hostname: " + hostName);
+var socket = io.connect('http://' + hostName);
+
 $(document).ready(function(){
 
   try{
@@ -312,19 +288,25 @@ $(document).ready(function(){
       pizzaDimension=pizzaJSON;
       console.log("Pizza succes: " + pizzaJSON)
       try {
-        // get initial set of active orders
-        $.getJSON("/order?isProcessed=0").done(function(orderJSON){
-          outstandingOrders = orderJSON;
-          console.log("Order succes: " + orderJSON);
+          // get initial set of active orders
+          // $.getJSON("/order?isProcessed=0").done(function(orderJSON){
+          // outstandingOrders = orderJSON;
 
           viewModel = new OrdersViewModel();
           ko.applyBindings(viewModel);
 
-        }).fail(function(data){
-           console.log("getJSON fail at order: " + data)
-           $('#init_error_window').fadeIn('fast');
-           $('#error_window_content').append("<pre>" + data.toString() + "</pre>");
-        });
+          socket.request('/order',{isProcessed: 0},function(response){
+              // viewModel.orders.valueHasMutated();
+              console.log('New observableArray from response:')
+
+              viewModel.orders.removeAll();
+              viewModel.orders(response);
+              viewModel.orders.valueHasMutated();
+
+              console.log('viewModel.orders');
+              console.log(viewModel.orders);
+          });
+          // console.log("Order succes: " + orderJSON);
       } catch (err) {
         console.log("getJSON, caught exception at order: " + err)
         $('#init_error_window').fadeIn('fast');

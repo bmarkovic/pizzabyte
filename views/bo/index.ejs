@@ -51,24 +51,24 @@
       <div id="order_customer">
         <div class="order_title_row" >
           <div class="order_title">
-            <h1>Narudžba br. <span id="order_number">#A8ADE</span></h1>
-            <h3 class="order_time">Od: danas, 118:30</h3>
+            <h1>Narudžba br. <span id="order_number" data-bind="text: zeroPadInt(currentOrderContext.id())"></span></h1>
+            <h3 class="order_time">Od prije: <!-- ko text: prettyDateTime(currentOrderContext.createdAt()) --> <!-- /ko --></h3>
           </div>
           <div class="order_buttons">
-            <a class="pure-button search-button"><i class= "icon-print">&nbsp;</i></a>
-            <a class="pure-button search-button red-button"><i class= "icon-minus-sign">&nbsp;</i></a> 
+            <a class="pure-button search-button" data-bind="click: $root.printOrder"><i class= "icon-print">&nbsp;</i></a>
+            <a class="pure-button search-button red-button" data-bind="click: $root.orderProcessed"><i class= "icon-minus-sign">&nbsp;</i></a> 
           </div>
         </div>
         <dl>
           <lh><h3>Kupac:</h3></lh>
           <dt>Ime:
-            <dd>Kupac Kupčević</dd>
+            <dd data-bind="text: currentOrderContext.userName()"></dd>
           </dt>
           <dt>Adresa:
-            <dd>Jadnih Gubitnika 12</dd>
+            <dd data-bind="text: currentOrderContext.userAddress()"></dd>
           </dt>
           <dt>Telefon:
-            <dd>067/890-123</dd>
+            <dd data-bind="text: currentOrderContext.userPhone()"></dd>
           </dt>
         </dl>
         <div class="order_summary">
@@ -81,25 +81,24 @@
                 <th>Cijena</th>
               </tr>
             </thead>
-            <tbody class="table_rows" data-bind="foreach: currentOrderContext().orderLines">
+            <tbody class="table_rows" data-bind="foreach: currentOrderContext.orderLines()">
               <tr data-bind"id: 'order_' + $index">
                 <td></td>
-                <td data-bind="text: $root.sizeTranslate($data)">Velika</td>
-                <td data-bind="text: pizza">Capriciosa</td>
-                <td class="order_row_price" data-bind="text: formatPrice($root.pizzaPrice($data))">8,00</td>
+                <td data-bind="text: $root.sizeTranslate($data)"></td>
+                <td data-bind="text: pizza"></td>
+                <td class="order_row_price" data-bind="text: formatPrice($root.pizzaPrice($data))"></td>
               </tr>
             </tbody>
-            <thead class="tabletotal">
+            <thead class="tabletotal">--
               <tr>
               <th colspan="3">Ukupno</th>
-              <th class="order_row_price"data-bind="text: formatPrice(subTotal($root.currentOrderContext()))">8,00</th>
+              <th class="order_row_price"data-bind="text: formatPrice(subTotal($root.currentOrderContext))">8,00</th>
               </tr>
             </thead>
           </table>
           <div class="well">
             <h4>Napomena</h4>
-            <p>
-              Lorem ipsum dolor sit amet, i ekstra sira.
+            <p data-bind="text: currentOrderContext.userNote()">
             </p>
           </div>
           <div>

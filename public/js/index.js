@@ -167,13 +167,13 @@ function PizzaViewModel() {
         userAddress: ko.utils.unwrapObservable(self.userAddress),
         userPhone: ko.utils.unwrapObservable(self.userPhone),
         userNote: ko.utils.unwrapObservable(self.userNote),
-        isProcessed: false
+        isProcessed: 0
      }
 
 //     console.log(orderData);
      
      try {
-       $.post("/order/create", orderData).done(function(ajaxResponse){
+       socket.request('/order/create', orderData, function(ajaxResponse) {
             if (ajaxResponse.id) {
                
                orderId = ajaxResponse.id;
@@ -192,9 +192,10 @@ function PizzaViewModel() {
                         if (ajaxResponse.id) {
                           console.log("All good.");
                           console.log(ajaxResponse);
-                          window.location = '/congrats';
+                          // window.location = '/congrats';
                         } else {
-                          console.log('Post problems: ' + ajaxResponse);
+                          console.log('Post problems: ');
+                          console.log(ajaxResponse);
                           $('#init_error_window').fadeIn('fast');
                         }            
                       }).fail(function(){
@@ -209,17 +210,16 @@ function PizzaViewModel() {
                 };
 
             } else {
-              console.log('Post problems: ' + ajaxResponse);
-              $('#init_error_window').fadeIn('fast');
-            }            
-          }).fail(function(){
-              console.log('Post failure');
+              console.log('Post problems: ');
               console.log(ajaxResponse);
               $('#init_error_window').fadeIn('fast');
-          });    
+              $('#error_window_content').appendTo('<pre>'+ajaxResponse+'</pre>');
+            }            
+        });    
      } catch(err) {
         $('#init_error_window').fadeIn('fast');
-        console.log('Catched!');
+        console.log('Catched!' + err.toString());
+        console.log(err);
      }
      // fill simpler serialized object not to send back
      // all the pizza dimension data that is in our
@@ -247,12 +247,13 @@ ko.bindingHandlers.fadeVisible = {
         $(element).toggle(ko.utils.unwrapObservable(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
     },
     update: function(element, valueAccessor) {
-        // Whenever the value subsequently changes, slowly fade the element in or out
-
+        // Whenever the value subsequently changes, slowly fade the element in or ou
         var value = valueAccessor();
         ko.utils.unwrapObservable(value) ? $(element).animate({display: 'none'},200).fadeIn('fast') : $(element).fadeOut('fast');
     }
 };
+var hostName =  window.location.host;
+var socket = io.connect('http://' + hostName);
 
 var viewModel;
 var pizzaDimension={};
