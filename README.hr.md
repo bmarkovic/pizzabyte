@@ -18,7 +18,7 @@ Naravno, kao poslijedica izbora tehnologija, aplikacija je gotovo u potpunosti n
 
 ## Šta je ovo
 
-To je "k'o fol" aplikacija za naručivanje pice. Korisnici naruče picu kroz meni u front-endu, a osoblje picerije printa i obrađuje narudžbe, te uređuje meni kroz back-end.
+To je aplikacija za naručivanje pice za zamišljenu piceriju. Korisnici naruče picu kroz meni u front-endu, a osoblje picerije printa i obrađuje narudžbe, te uređuje meni kroz back-end.
 
 ## Instalacija
 
