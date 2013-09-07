@@ -1,99 +1,194 @@
-function pizza (
-	name,
-	imgURL,
-	description,
-	ingredients,
-	small,
-	large,
-	jumbo,
-	id	
-	) {
-	var self=this;
-
-	self.name = ko.observable(name);
-	self.imgURL = ko.observable(imgURL);
-	self.description = ko.observable(description);
-	self.ingredients = ko.observable(ingredients);
-	self.small = ko.observable(small);
-	self.large = ko.observable(large);
-	self.jumbo = ko.observable(jumbo);
-	self.id = ko.observable(id);
+function pizza (data) {
+  var self=this;
+  console.log("Constructed pizza", data)
+  self.name = ko.observable(data.name);
+  self.imgURL = ko.observable(data.imgURL);
+  self.description = ko.observable(data.description);
+  self.ingredients = ko.observable(data.ingredients);
+  self.small = ko.observable(data.small);
+  self.large = ko.observable(data.large);
+  self.jumbo = ko.observable(data.jumbo);
+  self.id = ko.observable(data.id);
 }
 
 function MenuViewModel() {
 
-	var self = this;
-	self.initError = false;
+  var self = this;
 
-  // Sammy.js used as router, available as self.orderRouter
-  self.orderRouter = Sammy(function() {
+  self.currentWindow = ko.observable();
+  self.pizzas = ko.observableArray([]);
+  self.currentPizza = new pizza({
+    name: '',
+    imgURL: '',
+    description: '',
+    ingredients: '',
+    small: 0.0,
+    large: 0.0,
+    jumbo: 0.0,
+    id: -1});
+  
+  for (var i = pizzaJS.length - 1; i >= 0; i--) {
+    self.pizzas.push(new pizza(pizzaJS[i]));
+  };
+
+  console.log("Pizza obsArr: ", self.pizzas());
+
+  self.editCurrent = function(){};
+
+  // Sammy.js used as router, available as self.menuRouter
+  self.menuRouter = Sammy(function() {
     console.log("Sammy()");
     // list route
     this.get('#/list', function() {
-      console.log("Window: list");
+      console.log("Window: list", self.pizzas);
       self.currentWindow('list');
     });
 
+    this.get('#/add', function() {
+      console.log('route = #/add');
+      self.currentPizza = new pizza({
+        name: '',
+        imgURL: '',
+        description: '',
+        ingredients: '',
+        small: 0.0,
+        large: 0.0,
+        jumbo: 0.0,
+        id: -1});;
+
+      self.currentWindow('edit');
+
+      // this is how we look when we edit
+
+      self.editCurrent = function(){
+        console.log("Edit current", self.currentPizza)
+ //       var currentJS = ko.toJS(currentPizza);
+ //       delete currentJS.id;
+ //       console.log("Current JS: ", currentJS)
+
+ /*       try {
+          $.post('/pizza/create', currentJS).done(function(ajaxResponse) {
+            if (ajaxResponse.id) {
+              console.log("All good ", ajaxResponse)
+              currentJS.id = ajaxResponse.id;
+              self.pizzas.push(currentJS);
+            } else {
+              console.log('Post problems: ', ajaxResponse);
+              $('#init_error_window').fadeIn('fast');
+              $('#error_window_content').appendTo('<pre>'+ ajaxResponse +'</pre>')                
+            }
+
+          }).fail(function(){
+             console.log('Post failure', ajaxResponse);
+             $('#init_error_window').fadeIn('fast');            
+             $('#error_window_content').appendTo('<pre>'+ ajaxResponse +'</pre>')                
+          });
+        } catch(err) {
+          console.log('Post error', err);
+          $('#init_error_window').fadeIn('fast');
+          $('#error_window_content').appendTo('<pre>'+ err +'</pre>')                
+        }*/
+      }
+    }); // end add item
+
+    // processing (numbered)
     this.get('#/edit', function() {
-      console.log('route = #/edit')
-      this.app.setLocation('#/edit/' + self.orders()[0].id);
-    });
+      self.currentWindow('edit');
+      console.log("Window: ", self.currentWindow(), "  current item ", self.currentPizza);
 
-    // order processing (numbered order)
-    this.get('#/obrada/:order', function() {
-      self.currentWindow('obrada');
-      // self.currentOrderContext(this.params.order);
-      var orderId = this.params.order;
-      console.log("Window: " + self.currentWindow() + "  currentOrder " + orderId);
-      var order = $.grep(self.orders(), function(e){ return orderId == e.id; })[0];
+     self.editCurrent = function(){
+        console.log("Edit current", self.currentPizza)
+/*        var currentJS = ko.toJS(currentPizza);
+        console.log("Current JS: ", currentJS);
+*/
+/*        try {
+          $.post('/pizza/update/' + currentJS.id, currentJS).done(function(ajaxResponse) {
+            if (ajaxResponse.id) {
+              console.log("All good ", ajaxResponse)
+              currentJS.id = ajaxResponse.id;
+              self.pizzas.push(currentJS);
+            } else {
+              console.log('Post problems: ', ajaxResponse);
+              $('#init_error_window').fadeIn('fast');
+              $('#error_window_content').appendTo('<pre>'+ ajaxResponse +'</pre>')                
+            }
 
-      self.currentOrderContext.id(order.id);
-      self.currentOrderContext.userName(order.userName),
-      self.currentOrderContext.userAddress(order.userAddress);
-      self.currentOrderContext.userPhone(order.userPhone);
-      self.currentOrderContext.userNote(order.userNote);
-      self.currentOrderContext.createdAt(order.createdAt);       
-      
-      // let's get the current order lines
+          }).fail(function(){
+             console.log('Post failure', ajaxResponse);
+             $('#init_error_window').fadeIn('fast');            
+             $('#error_window_content').appendTo('<pre>'+ ajaxResponse +'</pre>')                
+          });
+        } catch(err) {
+          console.log('Post error', err);
+          $('#init_error_window').fadeIn('fast');
+          $('#error_window_content').appendTo('<pre>'+ err +'</pre>')                
+        }*/
+      }
 
-      console.log('Current Order Context before orderLine fetch'); 
-      console.log(ko.toJS(self.currentOrderContext));
+    }); // end get edit item
 
-      self.currentOrderContext.orderLines.removeAll();
-
-      try {
-        // get order lines for current order
-        $.getJSON("/orderline?order="+this.params.order).done(function(orderJSON){
-          console.log("OrderLine succes: "); 
-          console.log(orderJSON);
-
-          // feed order lines to current order context
-          for (var i = orderJSON.length - 1; i >= 0; i--) {
-            self.currentOrderContext.orderLines.push(new orderLine(orderJSON[i].pizzaSize, orderJSON[i].pizza));
-          };
-          console.log('Order stuffed:');
-          console.log(self.currentOrderContext.orderLines());
-          self.currentOrderContext.orderLines.valueHasMutated();
-
-        }).fail(function(data){
-           console.log("getJSON fail at order lines: " + data)
-           $('#init_error_window').fadeIn('fast');
-           $('#error_window_content').append("<pre>" + data.toString() + "</pre>");
-        });
-      } catch (err) {
-        console.log("getJSON, caught exception at order lines: " + err)
-        $('#init_error_window').fadeIn('fast');
-        $('#error_window_content').append("<pre>" + err.toString() + "</pre>");
-      };
-
-    }); // end get obrada order
+    this.get('/bo', function() {
+      window.location = '/bo';
+    });    
 
     // set list as default route
     this.get('', function() {
       console.log("Adressed root route.");
       this.app.runRoute('get', '#/list');
     });
-   
+  
   }).run(); // run Sammy, run!
 
+  self.addNew = function () {
+    console.log("Process next order.");
+    self.menuRouter.setLocation("#/add");
+  }
+
+  self.editPizza = function (data) {
+    console.log("Process pizza.", data);
+    self.currentPizza = data;
+    self.menuRouter.setLocation("#/edit");
+  }
+
 }
+
+formatPrice = function(price) {
+  return price ? price.toFixed(2).toString().replace(".",",") : "0,00";
+};
+
+// custom binding fadeVisible handler. Just plain eyecandy.
+ko.bindingHandlers.fadeVisible = {
+    init: function(element, valueAccessor) {
+        // Initially set the element to be instantly visible/hidden depending on the value
+              console.log("fadeVisible.init()");
+        var value = valueAccessor();
+        $(element).toggle(ko.utils.unwrapObservable(value)); // Use "unwrapObservable" so we can handle values that may or may not be observable
+    },
+    update: function(element, valueAccessor) {
+        // Whenever the value subsequently changes, slowly fade the element in or out
+        console.log("fadeVisible.update()" + element.toString() + valueAccessor());
+        var value = valueAccessor();
+        ko.utils.unwrapObservable(value) ? $(element).animate({display: 'none'},200).fadeIn('fast') : $(element).fadeOut('fast');
+    }
+};
+
+var hostName =  window.location.host;
+var socket = io.connect('http://' + hostName);
+
+var viewModel;
+var pizzaJS=[];
+
+$(document).ready(function(){
+  console.log("Document ready!")
+  $.getJSON("/pizza").done(function(data){
+
+    pizzaJS=data;
+    console.log("Done:", pizzaJS)
+    viewModel = new MenuViewModel();
+    ko.applyBindings(viewModel);
+
+  }).fail(function(data){
+    console.log("Fail", data)
+    // $('#init_error_window').fadeIn('fast');
+  });
+});

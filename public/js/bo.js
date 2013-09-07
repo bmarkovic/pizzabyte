@@ -73,6 +73,10 @@ function OrdersViewModel() {
       this.app.setLocation('#/obrada/' + self.orders()[0].id);
     });
 
+    this.get('/menu', function() {
+      window.location = '/menu';
+    });
+
     // order processing (numbered order)
     this.get('#/obrada/:order', function() {
       self.currentWindow('obrada');

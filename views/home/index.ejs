@@ -1,102 +1,94 @@
-    <div id="intro_screen" data-bind="fadeVisible: currentPath()=='intro'">
-    <div id="intro_sidebar">
-      <h1>Pizza<span id="byte">byte</span></h1>
-    </div>
-
-    <div id="intro_main">
-      <div>
-        <ol class="intro_bullets">
-          <li>Odaberi svoje pizze</li>
-
-          <li>Potvrdi narudžbu</li>
-
-          <li>...</li>
-
-          <li>Pizza!!</li>
-        </ol><a class="pure-button" id="start" href=
-        "#/start">Želim!!</a>
-      </div>
+<!-- Into screen -->
+<div id="intro_screen" data-bind="fadeVisible: currentPath()=='intro'">
+  <div id="intro_sidebar">
+    <h1>Pizza<span id="byte">byte</span></h1>
+  </div>
+  <div id="intro_main">
+    <div>
+      <ol class="intro_bullets">
+        <li>Odaberi svoje pizze</li>
+        <li>Potvrdi narudžbu</li>
+        <li>...</li>
+        <li>Pizza!!</li>
+      </ol>
+      <a class="pure-button" id="start" href="#/start">Želim!!</a>
     </div>
   </div>
+</div>
 
-  <div id="main_screen" data-bind="fadeVisible: currentPath()=='start'">
-    <div id="main_content">
-      <ol class="bullets">
-        <li class="active">Odaberi broj, veličinu i vrstu pizza</li>
-      </ol>
+<!-- Order first stage -->
+<div id="main_screen" data-bind="fadeVisible: currentPath()=='start'">
+  <div id="main_content">
+    <ol class="bullets">
+      <li class="active">Odaberi broj, veličinu i vrstu pizza</li>
+    </ol>
+    <div id="pizza_select">
+      <form class="pure-form" action="">
+        <table id="order_first_stage" class="pure-table fullwidth-table auto-counting">
+          <thead id="order_table_header">
+            <tr>
+              <th>
+                <span class="iconic-button" data-bind="click: addPizza"><i class=
+            "icon-plus-sign">&nbsp;</i></span>
+              </th>
+              <th class="size_header">Veličina
+                <div class="th_desc">
+                  <span>mala</span> <span>velika</span>
+                  <span>jumbo</span>
+                </div>
+              </th>
+              <th>Vrsta<br>
+                <span class="th_desc">odaberite iz padajučeg izbornika ili menija</span>
+              </th>
+              <th>Cijena<br>
+                <span class="th_desc">KM</span>
+              </th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody data-bind="template: { foreach: order, beforeRemove: hideOrderLine, afterAdd: showOrderLine }">
+            <tr data-bind"id: 'order_' + $index">
+              <td></td>
+                <td class="pizza_size_select">
+                  <label data-bind="attr: {for: 'small_' + ($index()+1)}">mala</label>
+                  <input class="small_pizza" type="radio" value="small" data-bind="checked: pizzaSize, attr: {id: 'small_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
+                  <label data-bind="attr: {for: 'large_' + ($index()+1)}">large</label>
+                  <input class="large_pizza" type="radio" value="large" data-bind="checked: pizzaSize, attr: {id: 'large_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
+                  <label data-bind="attr: {for: 'jumbo_' + ($index()+1)}">jumbo</label>
+                  <input class="jumbo_pizza" type="radio" value="jumbo" data-bind="checked: pizzaSize, attr: {id: 'jumbo_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
+              </td>
+              <td class="pizza_select">
+                <select data-bind="options: $root.pizzas, optionsText: 'name', value: $data.pizza"></select>
+                <a class="pure-button search-button" data-bind="click: $root.menuPizza">
+                <i class= "icon-reorder">&nbsp;</i></a> 
+              </td>
+              <td class="order_row_price" data-bind="text: formatPrice($root.pizzaPrice($data))">
+              </td>
+              <td>
+                <span class="iconic-button red-iconic-button" data-bind="click: $root.killPizza, clickBubble: false"><i class="icon-minus-sign">&nbsp;</i></span>
+              </td>
+            </tr>
+          </tbody>
 
-      <div id="pizza_select">
-        <form class="pure-form">
-  <table id="order_first_stage" class="pure-table fullwidth-table auto-counting">
-    <thead id="order_table_header">
-      <tr>
-        <th>
-          <span class="iconic-button" data-bind="click: addPizza"><i class=
-          "icon-plus-sign">&nbsp;</i></span>
-        </th>
+          <thead class="tabletotal">
+            <tr>
+              <th colspan="3">Ukupno</th>
 
-        <th class="size_header">
-          Veličina
-
-          <div class="th_desc">
-            <span>mala</span> <span>velika</span>
-            <span>jumbo</span>
-          </div>
-        </th>
-
-        <th>Vrsta<br><span class="th_desc">odaberite iz padajučeg izbornika ili menija</span></th>
-
-        <th>Cijena<br><span class="th_desc">KM</span></th>
-        <th></th>
-      </tr>
-    </thead>
-
-    <tbody data-bind="template: { foreach: order,
-                            beforeRemove: hideOrderLine,
-                            afterAdd: showOrderLine }">
-      <tr data-bind"id: 'order_' + $index">
-        <td></td>
-        <td class="pizza_size_select">
-          <!-- <small data-bind="text: pizzaSize"></small> -->
-          <label data-bind="attr: {for: 'small_' + ($index()+1)}">mala</label>
-            <input class="small_pizza" type="radio" value="small" data-bind="checked: pizzaSize, attr: {id: 'small_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
-           
-          <label data-bind="attr: {for: 'large_' + ($index()+1)}">large</label>
-            <input class="large_pizza" type="radio" value="large" data-bind="checked: pizzaSize, attr: {id: 'large_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
-          
-          <label data-bind="attr: {for: 'jumbo_' + ($index()+1)}">jumbo</label>
-            <input class="jumbo_pizza" type="radio" value="jumbo" data-bind="checked: pizzaSize, attr: {id: 'jumbo_' + ($index()+1), name: 'pizza_size_' +($index()+1)}">
-          
-        </td>
-        <td class="pizza_select">
-          <select data-bind="options: $root.pizzas, optionsText: 'name', value: $data.pizza"></select>
-            <a class="pure-button search-button" data-bind="click: $root.menuPizza">
-            <i class= "icon-reorder">&nbsp;</i></a> 
-        </td>
-        <td class="order_row_price" data-bind="text: formatPrice($root.pizzaPrice($data))"></td>
-        <td>
-          <span class="iconic-button red-iconic-button" 
-             data-bind="click: $root.killPizza, clickBubble: false"><i class=
-          "icon-minus-sign">&nbsp;</i></span>
-        </td>
-      </tr>
-    </tbody>
-
-    <thead class="tabletotal">
-      <tr>
-        <th colspan="3">Ukupno</th>
-
-        <th class="order_row_price"data-bind="text: formatPrice(subTotal(order))"></th>
-        <th></th>
-      </tr>
-    </thead>
-  </table>
-
-  <p><a href="#/potvrda" class="pure-button green-button">Potvrdi</a>
-    <a class="pure-button grey-button" href="#/intro">Odustani</a></p>
-          </form>
-      </div>
+              <th class="order_row_price"data-bind="text: formatPrice(subTotal(order))"></th>
+              <th></th>
+            </tr>
+          </thead>
+        </table>
+        <p>
+          <a href="#/potvrda" class="pure-button green-button">Potvrdi</a>
+          <a class="pure-button grey-button" href="#/intro">Odustani</a>
+        </p>
+      </form>
     </div>
+  </div>
+</div>
+
+<!-- Pizza selection modal dialog -->
 <div class="modal-wrap" id="pizzaselect-wrap" data-bind="fadeVisible: showPizzaMenu">
   <div class="modal-mask">
     <div class="modal-content">
@@ -137,7 +129,8 @@
     </div>
   </div>
 </div>
-</div>
+
+<!-- Order confirmation stage -->
 <div id="confirmation" data-bind="fadeVisible: currentPath()=='potvrda'">
   <div id="confirmation_content">
     <ol class="bullets">
@@ -192,24 +185,30 @@
               </tr>
             </thead>
           </table>
-          <p><a href="#/start" class="pure-button green-button">Prepravi</a>
-          <a class="pure-button orange-button" data-bind="click: $root.finalizeOrder">Naruči!</a>
-          <a class="pure-button grey-button" href="#/intro">Odustani</a></p>
+          <p>
+            <a href="#/start" class="pure-button green-button">Prepravi</a>
+            <a class="pure-button orange-button" data-bind="click: $root.finalizeOrder">Naruči!</a>
+            <a class="pure-button grey-button" href="#/intro">Odustani</a>
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Error modal dialog -->
 <div class="modal-wrap" id="init_error_window" data-bind="visible:initError">
   <div class="modal-mask">
     <div class="modal-content" id="error_window_content">
-    <h1>Nezgodno... aplikacija nije u funkciji :(</h1>
-    <p>
-      Naravno, radimo sve što je u našoj moći da ju osposobimo. Vratite se kasnije.
-    </p>
-    <p>
-      Hvala na razumijevanju!
-    </p>
+      <h1>Nezgodno... aplikacija nije u funkciji :(</h1>
+      <p>
+        Naravno, radimo sve što je u našoj moći da ju osposobimo. Vratite se kasnije.
+      </p>
+      <p>
+        Hvala na razumijevanju!
+      </p>
     </div>
   </div>
 </div>
+
 <script type="text/javascript" src="/js/index.js"></script>
