@@ -173,13 +173,12 @@ function PizzaViewModel() {
 //     console.log(orderData);
      
      try {
-       socket.request('/order/create', orderData, function(ajaxResponse) {
+       $.post('/order/create', orderData).done(function(ajaxResponse) {
             if (ajaxResponse.id) {
                
                orderId = ajaxResponse.id;
-               console.log("All good.");
-               console.log(ajaxResponse);
-               console.log('Order ID: ' + orderId);
+               console.log("All good.", ajaxResponse);
+               console.log('Order ID: ', orderId);
 
                for (var i = orderJS.length - 1; i >= 0; i--) {
                  orderLineJS = {
@@ -190,45 +189,37 @@ function PizzaViewModel() {
                  try {
                    $.post("/orderline/create", orderLineJS).done(function(ajaxResponse){
                         if (ajaxResponse.id) {
-                          console.log("All good.");
-                          console.log(ajaxResponse);
-                          // window.location = '/congrats';
+                          console.log("All good.", ajaxResponse);
+                          window.location = '/congrats';
                         } else {
-                          console.log('Post problems: ');
-                          console.log(ajaxResponse);
+                          console.log('Post problems: ', ajaxResponse);
                           $('#init_error_window').fadeIn('fast');
                         }            
                       }).fail(function(){
-                          console.log('Post failure');
-                          console.log(ajaxResponse);
+                          console.log('Post failure', ajaxResponse);
                           $('#init_error_window').fadeIn('fast');
                       });    
                  } catch(err) {
                     $('#init_error_window').fadeIn('fast');
-                    console.log('Catched!');
+                    console.log('Catched!', err);
                  }
-                };
+                }
 
             } else {
-              console.log('Post problems: ');
-              console.log(ajaxResponse);
+              console.log('Post problems: ', ajaxResponse);
               $('#init_error_window').fadeIn('fast');
-              $('#error_window_content').appendTo('<pre>'+ajaxResponse+'</pre>');
-            }            
-        });    
+              $('#error_window_content').appendTo('<pre>'+ ajaxResponse +'</pre>');
+            }
+         }).fail(function(){
+              console.log('Post failure', ajaxResponse);
+              $('#init_error_window').fadeIn('fast');
+          });              
      } catch(err) {
         $('#init_error_window').fadeIn('fast');
         console.log('Catched!' + err.toString());
         console.log(err);
      }
-     // fill simpler serialized object not to send back
-     // all the pizza dimension data that is in our
-     // orderSO object now
 
-
-
-
-     // window.location = "/congrats.html";  
   };
 }
 

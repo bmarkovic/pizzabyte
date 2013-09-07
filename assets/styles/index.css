@@ -526,6 +526,15 @@ th.order_row_price,
     clear:both;
 }
 
+#order_customer dl:before {
+       content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0; 
+}
+
 #order_customer dl:after {
     content: ".";
     display: block;
@@ -534,7 +543,6 @@ th.order_row_price,
     line-height: 0;
     height: 0;
 }
- 
 
 #order_customer dl dt {
     display: inline-block;

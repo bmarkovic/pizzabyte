@@ -179,16 +179,17 @@ function OrdersViewModel() {
   // Printing the order
   self.printOrder = function() {
 
-    var prtContent = $('#order_customer').html();
+    var prtContent = $('#order_detail .modal-content').clone();
+    prtContent.contents().find('a').css('visibility','hidden');
 
-    var printWindow = window.open('/printorder', 'Štampanje narudžbe', 'left=50,top=50,width=640,height=640,toolbar=0,scrollbars=0,status=0');
-
-    $(printWindow.document).ready(function(){
-      $(printWindow.document).contents().find('body').html(prtContent);
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
+    var printWindow = window.open('/printorder', '', 'left=50,top=50,width=640,height=640,toolbar=0,scrollbars=0,status=0');
+    printWindow.focus();
+ 
+    $(printWindow).load(function(){
+        $(printWindow.document).contents().find('body').prepend(prtContent.html());
+        printWindow.document.close();
+        printWindow.print();
+        // printWindow.close();
     });
 
   }
@@ -277,7 +278,28 @@ var pizzaDimension={};
 var outstandingOrders=[];
 var viewModel;
 var hostName =  window.location.host;
-console.log("Hostname: " + hostName);
+
+// Socket handling functions
+var requestOrders = function(response) {     
+  // viewModel.orders.valueHasMutated();
+  console.log('New observableArray from response:')
+
+  viewModel.orders.removeAll();
+  viewModel.orders(response);
+  viewModel.orders.valueHasMutated();
+
+  console.log('viewModel.orders: ', viewModel.orders);
+}
+
+var connectOrders = function (){
+  socket.request('/order',{isProcessed: 0}, requestOrders);
+
+  socket.on('message', function(message){
+    console.log('Got message: ',message);
+    viewModel.orders.push(message.data);
+  });
+}
+
 var socket = io.connect('http://' + hostName);
 
 $(document).ready(function(){
@@ -294,18 +316,7 @@ $(document).ready(function(){
 
           viewModel = new OrdersViewModel();
           ko.applyBindings(viewModel);
-
-          socket.request('/order',{isProcessed: 0},function(response){
-              // viewModel.orders.valueHasMutated();
-              console.log('New observableArray from response:')
-
-              viewModel.orders.removeAll();
-              viewModel.orders(response);
-              viewModel.orders.valueHasMutated();
-
-              console.log('viewModel.orders');
-              console.log(viewModel.orders);
-          });
+          socket.on('connect', connectOrders);
           // console.log("Order succes: " + orderJSON);
       } catch (err) {
         console.log("getJSON, caught exception at order: " + err)
