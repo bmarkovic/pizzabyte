@@ -18,7 +18,7 @@ Naravno, kao poslijedica izbora tehnologija, aplikacija je gotovo u potpunosti n
 
 ## Šta je ovo
 
-To je aplikacija za naručivanje pice za zamišljenu piceriju. Korisnici naruče picu kroz meni u front-endu, a osoblje picerije printa i obrađuje narudžbe, te uređuje meni kroz back-end.
+To je aplikacija za naručivanje pice za zamišljenu piceriju. Korisnici naruče picu kroz meni u front-endu, a osoblje picerije printa i obrađuje narudžbe kroz back-end.
 
 ## Instalacija
 
@@ -97,13 +97,12 @@ Za brisanje stare baze (ponovno popunjavanje) obrišite datoteku `.tmp/dirty.db`
 
 ## Kako ovo radi
 
-Aplikacija koristi socket.io za komunikaciju između prednjeg i zadnjeg dijela. Kad se nova narudžba napravi automatski se dodaje na listu neobrađenih narudžbi (front-end "pinga" backend preko socket.io). Kad se narudžba obradi jednostavno se označi kao obrađena i više se ne pojavljuje u spisku. Tri su SPA aplikacija (ako ne računamo popunjavanje baze):
+Aplikacija koristi socket.io za komunikaciju između prednjeg i zadnjeg dijela. Kad se nova narudžba napravi automatski se dodaje na listu neobrađenih narudžbi (front-end "pinga" backend preko socket.io). Kad se narudžba obradi jednostavno se označi kao obrađena i više se ne pojavljuje u spisku. Dvije su SPA aplikacija (ako ne računamo popunjavanje baze):
 
 * Front office
 * Obrada narudžbe
-* Meni editor
 
-Sve su implementrane kao jednostranične aplikacije koje se u potpunost izvršavaju na klijentu kao View-ovi (pogledi) Sails MVC-a, svaka sa svojim klijentskim MVVM kodom implementiranim u Knockout.js. Kako je upravljanje direktno serviranim datotekama drugačije u Sails nakon 0.9x (a ja nisam našao način kako da implementiram svoje riješenje) ova aplikacija koristi posljendnju 0.8 verziju.
+Obije su implementrane kao jednostranične aplikacije koje se u potpunost izvršavaju na klijentu kao View-ovi (pogledi) Sails MVC-a, svaka sa svojim klijentskim MVVM kodom implementiranim u Knockout.js. Kako je upravljanje direktno serviranim datotekama drugačije u Sails nakon 0.9x (a ja nisam našao način kako da implementiram svoje riješenje) ova aplikacija koristi posljendnju 0.8 verziju.
 
 Trenutno autentifikacija i sigurnost nisu implementirane, najvećim dijelom jer Sails čini taj dio relativno trivijalnim tako da će to u nekoj od narednih revizija aplikacije biti implementirano.
 

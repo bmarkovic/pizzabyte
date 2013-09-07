@@ -20,7 +20,7 @@ Quite obviously, the application is almost entirely written in JavaScript.
 
 ## What is it
 
-It's a mockup pizza ordering app that enables users to order Pizza from a menu through the front-end, and pizzeria staff to print orders, mark them processed and edit the menu from the back-end.
+It's a mockup pizza ordering app that enables users to order Pizza from a menu through the front-end, and pizzeria staff to print orders and mark them processed from the back-end.
 
 ## Installation
 
@@ -102,11 +102,10 @@ To erase the old database (for re-population) delete the file `.tmp/dirty.db` re
 
 ## How it works
 
-It uses socket.io to communicate between the offices. When a new order is made it's automatically added to the list (it "pings" the backend app via socket.io). When an order is processed in the backend it's simply marked as such in data storage and will no longer show up in the list. There are three SPAs (not counting the database fixture filler described above):
+It uses socket.io to communicate between the offices. When a new order is made it's automatically added to the list (it "pings" the backend app via socket.io). When an order is processed in the backend it's simply marked as such in data storage and will no longer show up in the list. There are two SPAs (not counting the database fixture filler described above):
 
 * Front office
 * Order processing
-* Menu editor
 
 All are implemented as single page apps running entirely on the client side as Sails Views, each with it's own client-side MVVM code implemented using Knockout.js. Because asset management is slightly differnet for this approach in Sails post 0.9 (and I haven't worked out a way around it) it uses the last 0.8 version of Sails.
 
