@@ -1,5 +1,7 @@
 # PizzaByte
 
+To read in Croatian: https://github.com/bmarkovic/pizzabyte/blob/master/README.hr.md
+
 This is my sails.js/node.js web applictaion that is my entry for this course:
 
 http://c2.etf.unsa.ba/course/view.php?id=171
