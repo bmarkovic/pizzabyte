@@ -4,3 +4,4 @@ node_modules/
 # SAILS JS stuff
 local.js
 .tmp/
+.tmp/dirty.db
