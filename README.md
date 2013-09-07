@@ -24,7 +24,7 @@ It's a mockup pizza ordering app that enables users to order Pizza from a menu t
 
 ## Installation
 
-To run the app locally you need Node.js and while people have run node apps on Windows, I wouldn't know how to go about it, so to follow these steps a *nix machine (a VM will do fine) is recommended. The app and steps have been tested on Ubuntu Raring, Ubuntu Precise and OS X Mountain Lion under **nodeenv**, while the easy way was tested only under Raring. 
+To run the app locally you need Node.js and while people have run node apps on Windows, I wouldn't know how to go about it, so to follow these steps a \*nix machine (a VM will do fine) is recommended. The app and steps have been tested on Ubuntu Raring, Ubuntu Precise and OS X Mountain Lion under **nodeenv**, while the easy way was tested only under Raring. 
 
 There are two ways to bootstrap.
 
