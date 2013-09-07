@@ -8,6 +8,7 @@ lib-cov
 *.pid
 *.gz
 
+
 pids
 logs
 results
@@ -17,5 +18,8 @@ node_modules
 
 # SAILS JS stuff
 local.js
+
+# Y U No ignore this file dammit
+*.db
 .tmp
 .tmp/dirty.db
