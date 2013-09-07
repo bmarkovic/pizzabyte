@@ -22,7 +22,7 @@ To je aplikacija za naručivanje pice za zamišljenu piceriju. Korisnici naruče
 
 ## Instalacija
 
-Da bi pokrenuli aplikaciju lokalno potreban je Node.js. Ljudi rade sa node aplikacijama pod Windowsima, ali ja ne bih znao kako. Da bi ste pratili instalacijske korake potreban vam je nekakav *nix (može i virtualni stroj). Aplikacije i koraci testirani su pod Ubuntu Raring, Ubuntu Precise i OSX Mountain Lion, pod **nodeenv** dok je lakši način testiran samo pod Ubuntu Raring.
+Da bi pokrenuli aplikaciju lokalno potreban je Node.js. Ljudi rade sa node aplikacijama pod Windowsima, ali ja ne bih znao kako. Da bi ste pratili instalacijske korake potreban vam je nekakav \*nix (može i virtualni stroj). Aplikacije i koraci testirani su pod Ubuntu Raring, Ubuntu Precise i OSX Mountain Lion, pod **nodeenv** dok je lakši način testiran samo pod Ubuntu Raring.
 
 Dva su načina pokretanja.
 
