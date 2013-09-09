@@ -10,6 +10,25 @@ function orderLine(pizzaSize, orderedPizza) {
     self.pizza = ko.observable(orderedPizza);
 }
 
+$(document).keyup(function(e) {
+  var currentWindow = viewModel.currentWindow();
+  console.log("KesPress, currentWindow = " + currentWindow);
+  switch (e.keyCode) {
+    case 27: {
+      console.log("ESC keypress detected");
+      if (currentWindow == 'obrada') {
+        viewModel.orderRouter.setLocation('#/list');
+      }
+    }
+    case 13: {
+      console.log('ENTER keypress detected');
+      if (currentWindow == 'list' || currentWindow == '') {
+        viewModel.orderRouter.setLocation('#/obrada')
+      }
+    }
+  }
+});
+
 //  ---------- ViewModel
 
 function OrdersViewModel() {
@@ -302,25 +321,6 @@ $(document).ready(function(){
           viewModel = new OrdersViewModel();
           ko.applyBindings(viewModel);
           socket.on('connect', connectOrders);
-          $(document).keyup(function(e) {
-            var currentWindow = viewModel.currentWindow();
-            console.log("KesPress, currentWindow = " + currentWindow);
-            switch (e.keyCode) {
-              case 27: {
-                console.log("ESC keypress detected");
-                if (currentWindow == 'obrada') {
-                  viewModel.orderRouter.setLocation('#/list');
-                }
-              }
-              case 13: {
-                console.log('ENTER keypress detected');
-                if (currentWindow == 'list' || currentWindow == '') {
-                  viewModel.orderRouter.setLocation('#/obrada')
-                }
-              }
-            }
-          });
-
           // console.log("Order succes: " + orderJSON);
       } catch (err) {
         console.log("getJSON, caught exception at order: " + err)

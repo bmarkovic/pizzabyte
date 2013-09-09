@@ -5,7 +5,7 @@ module.exports.adapters = {
 
 	// If you leave the adapter config unspecified 
 	// in a model definition, 'default' will be used.
-	'default': 'mysql',
+	'default': 'dirty',
 	
 	// In-memory adapter for DEVELOPMENT ONLY
 	// (data is NOT preserved when the server shuts down)
@@ -21,7 +21,10 @@ module.exports.adapters = {
 	//				See https://github.com/felixge/node-dirty/issues/34
 	disk: {
 		module: 'sails-dirty',
-		filePath: './.tmp/dirty.db',
+		filePath: './dirtyharry.js',
+
+		// Do ya feel lucky, punk?
+
 		inMemory: false,
 		schema: true
 	},
@@ -30,9 +33,9 @@ module.exports.adapters = {
 	// Learn more: http://en.wikipedia.org/wiki/MySQL
 	mysql: {
 		module		: 'sails-mysql',
-		host		: '69.89.31.214',
-		user		: 'elivero1_pizza',
+		host		: 'ec2-23-21-211-172.compute-1.amazonaws.com',
+		user		: 'pizzabyte',
 		password	: 'Pi33a8y+e',
-		database	: 'elivero1_pizzabyte'
+		database	: 'pizzabyte'
 	}
 };
