@@ -4,6 +4,15 @@ Ovo je moja sails.js/node.js web aplikacija kao rad za ovaj kurs:
 
 http://c2.etf.unsa.ba/course/view.php?id=171
 
+<<<<<<< HEAD
+=======
+<strike>Možete ju vidjeti na djelu</strike> ovdje:
+* http://pizzabyte.herokuapp.com
+* http://pizzabyte.herokuapp.com/bo  (Back office)
+
+> zapravo ako želite koristit Heroku verziju morate prilikom svakog reseta aplikacije popuniti dummy podatke putem ovog linka: http://pizzabyte.herokuapp.com/populate
+
+>>>>>>> ba17b8e... Update LICENSE
 # Racional
 
 Prikazati moć web socket-a i SPA (jedno-straničnih web aplikacija). Koristi slijedeće tehnologije:
@@ -28,7 +37,7 @@ Dva su načina pokretanja.
 
 ### Lakši način
 
-Pod uvjetom da već imate node.js, možete samo klonirati ovaj repozitorij i instalirati ovisnih biblioteka lokalno sa `npm`:
+Pod uvjetom da već imate node.js, možete samo klonirati ovaj repozitorij i instalirati ovisne biblioteke lokalno sa `npm`:
 
     # git clone https://github.com/bmarkovic/pizzabyte.git
     # cd pizzabyte
@@ -60,14 +69,14 @@ Mac:
     # easy_install pip
     # pip install nodeenv
 
-Dalje se putevi ova dva OS-a spoje.
+Dalje se putevi ova dva OS-a spajaju.
 
-Prvo treba kreirati novo virtualno okruženje pomoću `nodeenv` i instalirati sails globalno:
+Prvo treba kreirati novo virtualno okruženje pomoću `nodeenv` i instalirati **Sails.js** globalno:
 
     # nodeenv sails
     # cd sails
     # . bin/activate
-    # npm install sails@0.8.94
+    # npm -ginstall sails@0.8.94
 
 Bitno je da ovo bude verzija Sails-a jer je ovaj framework trenutno pokretna meta, a verzija 0.9 dostupna u vrijeme razvoja ove aplikacije nije dobro riješila hostanje više SPA u jednoj instanci.
 
