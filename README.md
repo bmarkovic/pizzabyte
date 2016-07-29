@@ -6,15 +6,13 @@ This is my sails.js/node.js web applictaion that is my entry for this course:
 
 http://c2.etf.unsa.ba/course/view.php?id=171
 
-<<<<<<< HEAD
-=======
+
 You can see it <strike>running</strike> here:
 * http://pizzabyte.herokuapp.com
 * http://pizzabyte.herokuapp.com/bo  (for the Back office)
 
 > actually if you want to use the Heroku app you need to repopulate database every time the app restarts on this link http://pizzabyte.herokuapp.com/populate
 
->>>>>>> ba17b8e... Update LICENSE
 ## Rationale
 
 Showcasing the power of web sockets and single-page apps. It uses the following technologies:
